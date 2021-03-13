@@ -32,7 +32,7 @@ public class PlayerReceiver : MonoBehaviour
 
         if (mSocket.Available > 0)
         {
-            mSocket.ReceiveFrom(buffer, SocketFlags.Peek, ref endpoint);
+            mSocket.ReceiveFrom(buffer, ref endpoint);
 
             if (endpoint == EndPointChooser.MarcoEndPoint)
             {
