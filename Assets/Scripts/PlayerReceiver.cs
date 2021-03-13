@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -12,34 +13,45 @@ public class PlayerReceiver : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        if (gameObject.name.Contains(Environment.UserName))
+        {
+            enabled = false;
+            return;
+        }
+
+        mSocket = new Socket(EndPointChooser.ChosenOpponentEndPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+
+        mSocket.Bind(EndPointChooser.LocalBindEndPoint);
     }
 
     // Update is called once per frame
     void Update()
     {
         byte[] buffer = new byte[15000];
-        EndPoint endpoint = null;
+        EndPoint endpoint = EndPointChooser.ChosenOpponentEndPoint;
 
-        mSocket.ReceiveFrom(buffer, ref endpoint);
-
-        if (endpoint == EndPointChooser.MarcoEndPoint)
+        if (mSocket.Available > 0)
         {
-            Debug.Log("Baller, it's marco");
-        }
+            mSocket.ReceiveFrom(buffer, SocketFlags.Peek, ref endpoint);
 
-        int stringLen = 0;
-        for (int i = 0; i < buffer.Length; ++i)
-        {
-            if (buffer[i] == 0)
+            if (endpoint == EndPointChooser.MarcoEndPoint)
             {
-                stringLen = i;
-                break;
+                Debug.Log("Baller, it's marco");
             }
+
+            int stringLen = 0;
+            for (int i = 0; i < buffer.Length; ++i)
+            {
+                if (buffer[i] == 0)
+                {
+                    stringLen = i;
+                    break;
+                }
+            }
+
+            string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
+
+            Debug.Log($"Message: {message}");
         }
-
-        string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
-
-        Debug.Log($"Message: {message}");
     }
 }
