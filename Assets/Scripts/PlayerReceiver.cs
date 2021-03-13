@@ -52,6 +52,13 @@ public class PlayerReceiver : MonoBehaviour
             string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
 
             Debug.Log($"Message: {message}");
+
+            string[] coords = message.Split('|');
+
+            float x = float.Parse(coords[0]);
+            float y = float.Parse(coords[1]);
+
+            transform.position = new Vector3(x, y, transform.position.z);
         }
     }
 }
