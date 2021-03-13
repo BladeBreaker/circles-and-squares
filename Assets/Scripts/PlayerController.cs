@@ -6,6 +6,26 @@ using System.Net.Sockets;
 using System;
 using System.Text;
 
+static class EndPointChooser
+{
+    public static readonly IPEndPoint DanEndPoint = new IPEndPoint(new IPAddress(new byte[] { 64, 137, 136, 12 }), 35353);
+    public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(new IPAddress(new byte[] { 184, 147, 95, 146 }), 35353);
+
+    public static readonly IPEndPoint ChosenEndPoint = null;
+
+    static EndPointChooser()
+    {
+        if (Environment.UserName == "Dan")
+        {
+            ChosenEndPoint = MarcoEndPoint;
+        }
+        else
+        {
+            ChosenEndPoint = DanEndPoint;
+        }
+    }
+}
+
 public class PlayerController : MonoBehaviour
 {
     // Marco's IP: 184.147.95.146
@@ -16,11 +36,6 @@ public class PlayerController : MonoBehaviour
     private Socket mSocket = null;
 
 
-    public readonly IPEndPoint mDanEndPoint = new IPEndPoint(new IPAddress(new byte[] { 64, 137, 136, 12 }), 35353);
-    public readonly IPEndPoint mMarcoEndPoint = new IPEndPoint(new IPAddress(new byte[] { 184, 147, 95, 146 }), 35353);
-
-    private IPEndPoint mChosenEndPoint = null;
-
     void Start()
     {
         // Marco controls the Marco GameObject... Dan controls the Dan GameObject
@@ -28,15 +43,6 @@ public class PlayerController : MonoBehaviour
         {
             enabled = false;
             return;
-        }
-
-        if (Environment.UserName == "Dan")
-        {
-            mChosenEndPoint = mMarcoEndPoint;
-        }
-        else
-        {
-            mChosenEndPoint = mDanEndPoint;
         }
 
         mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -55,7 +61,7 @@ public class PlayerController : MonoBehaviour
 
         string message = $"{transform.position.x}|{transform.position.y}";
 
-        mSocket.SendTo(Encoding.UTF8.GetBytes(message), mChosenEndPoint);
+        mSocket.SendTo(Encoding.UTF8.GetBytes(message), EndPointChooser.ChosenEndPoint);
     }
 
 
