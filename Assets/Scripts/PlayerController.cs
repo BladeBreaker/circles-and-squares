@@ -8,10 +8,10 @@ using System.Text;
 
 static class EndPointChooser
 {
-    public static readonly int port = 35355;
+    public static readonly int port = 35353;
 
-    public static readonly IPEndPoint DanEndPoint = new IPEndPoint(new IPAddress(new byte[] { 64, 137, 136, 12 }), port);
-    public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(new IPAddress(new byte[] { 184, 147, 95, 146 }), port);
+    public static readonly IPEndPoint DanEndPoint = new IPEndPoint(IPAddress.Parse("64.137.136.12"), port);
+    public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.147.95.146"), port);
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
 
     public static readonly IPEndPoint ChosenOpponentEndPoint = null;

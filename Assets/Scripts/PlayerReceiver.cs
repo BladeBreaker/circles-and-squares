@@ -27,11 +27,11 @@ public class PlayerReceiver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        byte[] buffer = new byte[15000];
-        EndPoint endpoint = EndPointChooser.ChosenOpponentEndPoint;
-
         if (mSocket.Available > 0)
         {
+            byte[] buffer = new byte[15000];
+            EndPoint endpoint = EndPointChooser.ChosenOpponentEndPoint;
+
             mSocket.ReceiveFrom(buffer, ref endpoint);
 
             if (endpoint == EndPointChooser.MarcoEndPoint)
