@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-
+        
     }
 
     void Update()
@@ -17,7 +17,23 @@ public class Player : MonoBehaviour
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        
+
         transform.Translate(horizontal * Speed * deltaTime, vertical * Speed * deltaTime, 0.0f);
+
+        ClampPositionToScreen();
+    }
+
+
+    void ClampPositionToScreen()
+    {
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+
+        float x = screenPosition.x;
+        float y = screenPosition.y;;
+
+        x = Mathf.Clamp(x, 0, Camera.main.pixelWidth);
+        y = Mathf.Clamp(y, 0, Camera.main.pixelHeight);
+
+        transform.position = Camera.main.ScreenToWorldPoint(new Vector3(x, y, screenPosition.z));
     }
 }
