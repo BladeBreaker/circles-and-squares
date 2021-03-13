@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // Marco's IP: 184.147.95.146
+    // Dan's IP: 64.137.136.12
+
     public float Speed = 1.0f;
 
     void Start()
