@@ -64,7 +64,10 @@ public class PlayerController : MonoBehaviour
 
         string message = $"{transform.position.x}|{transform.position.y}";
 
-        mSocket.SendTo(Encoding.UTF8.GetBytes(message), EndPointChooser.ChosenOpponentEndPoint);
+        byte[] bytes = Encoding.UTF8.GetBytes(message);
+        mSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
+        NetStatTracker.MessagesSent++;
+        NetStatTracker.BytesSent += (ulong)(bytes.Length * sizeof(byte));
     }
 
 
@@ -73,7 +76,7 @@ public class PlayerController : MonoBehaviour
         Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 
         float x = screenPosition.x;
-        float y = screenPosition.y;;
+        float y = screenPosition.y;
 
         x = Mathf.Clamp(x, 0, Camera.main.pixelWidth);
         y = Mathf.Clamp(y, 0, Camera.main.pixelHeight);

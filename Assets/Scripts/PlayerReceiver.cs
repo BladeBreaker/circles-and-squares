@@ -27,7 +27,7 @@ public class PlayerReceiver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (mSocket.Available > 0)
+        while (mSocket.Available > 0)
         {
             byte[] buffer = new byte[15000];
             EndPoint endpoint = EndPointChooser.ChosenOpponentEndPoint;
@@ -50,6 +50,8 @@ public class PlayerReceiver : MonoBehaviour
             }
 
             string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
+
+            NetStatTracker.MessagesReceived++;
 
             Debug.Log($"Message: {message}");
 
