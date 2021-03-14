@@ -97,10 +97,10 @@ public class NetStats : MonoBehaviour
             var (messagesSentPerSecond, bytesSentPerSecond, messagesReceivedPerSecond, bytesReceivedPerSecond) = NetStatTracker.GetNetStats();
 
             GUI.Box(new Rect(2, 2, 400, 300), "");
-            GUI.Label(new Rect(10, 60, 400, 30), $"Sent (Bps): {bytesSentPerSecond}");
             GUI.Label(new Rect(10, 30, 400, 30), $"Sent (Messages): {messagesSentPerSecond}");
-            GUI.Label(new Rect(10, 120, 400, 30), $"Received (Bps): {bytesReceivedPerSecond}");
-            GUI.Label(new Rect(10, 150, 400, 30), $"Received (Messages): {messagesReceivedPerSecond}");
+            GUI.Label(new Rect(10, 60, 400, 30), $"Sent (Bps): {bytesSentPerSecond}");
+            GUI.Label(new Rect(10, 120, 400, 30), $"Received (Messages): {messagesReceivedPerSecond}");
+            GUI.Label(new Rect(10, 150, 400, 30), $"Received (Bps): {bytesReceivedPerSecond}");
             if (GUI.Button(new Rect(120, 250, 150, 40), "Hide Stats"))
                 mShowGUI = false;
         }
