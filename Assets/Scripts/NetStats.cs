@@ -36,18 +36,16 @@ public static class NetStatTracker
 
     public static ulong AverageBytesPerSecond(List<NetStatInfo> messageList)
     {
+        RemoveOldTrackedMessages(messageList, DateTime.Now - MessageLife);
+
         if (messageList.Count == 0)
             return 0ul;
-
-        RemoveOldTrackedMessages(messageList, DateTime.Now - MessageLife);
 
         ulong bytesSent = 0ul;
         foreach (var message in messageList)
         {
             bytesSent += message.MessageLength;
         }
-
-        bytesSent /= (ulong)messageList.Count;
 
         double bytesSentD = (double)bytesSent;
         bytesSentD = bytesSentD / MessageLife.TotalSeconds;
@@ -58,10 +56,10 @@ public static class NetStatTracker
 
     public static uint MessagesPerSecond(List<NetStatInfo> messages)
     {
+        RemoveOldTrackedMessages(messages, DateTime.Now - MessageLife);
+
         if (messages.Count == 0)
             return 0u;
-
-        RemoveOldTrackedMessages(messages, DateTime.Now - MessageLife);
 
         double messageCountDouble = (double)messages.Count;
         messageCountDouble = messageCountDouble / MessageLife.TotalSeconds;
