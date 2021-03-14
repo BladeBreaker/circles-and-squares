@@ -66,8 +66,8 @@ public class PlayerController : MonoBehaviour
 
         byte[] bytes = Encoding.UTF8.GetBytes(message);
         mSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
-        NetStatTracker.MessagesSent++;
-        NetStatTracker.BytesSent += (ulong)(bytes.Length * sizeof(byte));
+
+        NetStatTracker.TrackMessageSent((ulong)(bytes.Length * sizeof(byte)));
     }
 
 

@@ -1,13 +1,84 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+
+public struct NetStatInfo
+{
+    public DateTime Timestamp;
+    public ulong MessageLength;
+}
 
 public static class NetStatTracker
 {
-    public static uint MessagesSent = 0;
-    public static ulong BytesSent = 0ul;
-    public static uint MessagesReceived = 0;
-    public static ulong BytesReceived = 0ul;
+    public static List<NetStatInfo> MessagesReceived = new List<NetStatInfo>();
+    public static List<NetStatInfo> MessagesSent = new List<NetStatInfo>();
+
+    public static TimeSpan MessageLife = TimeSpan.FromSeconds(5);
+
+    public static void TrackMessageReceived(ulong messageLength)
+    {
+        MessagesReceived.Add(new NetStatInfo() { MessageLength = messageLength, Timestamp = DateTime.Now });
+        RemoveOldTrackedMessages(MessagesSent, DateTime.Now - MessageLife);
+    }
+
+    public static void TrackMessageSent(ulong messageLength)
+    {
+        MessagesSent.Add(new NetStatInfo() { MessageLength = messageLength, Timestamp = DateTime.Now });
+        RemoveOldTrackedMessages(MessagesSent, DateTime.Now - MessageLife);
+    }
+
+    public static void RemoveOldTrackedMessages(List<NetStatInfo> messages, DateTime date)
+    {
+        messages.RemoveAll(message => message.Timestamp < date);
+    }
+
+    public static ulong AverageBytesPerSecond(List<NetStatInfo> messageList)
+    {
+        if (messageList.Count == 0)
+            return 0ul;
+
+        RemoveOldTrackedMessages(messageList, DateTime.Now - MessageLife);
+
+        ulong bytesSent = 0ul;
+        foreach (var message in messageList)
+        {
+            bytesSent += message.MessageLength;
+        }
+
+        bytesSent /= (ulong)messageList.Count;
+
+        double bytesSentD = (double)bytesSent;
+        bytesSentD = bytesSentD / MessageLife.TotalSeconds;
+
+        bytesSent = (ulong)bytesSentD;
+        return bytesSent;
+    }
+
+    public static uint MessagesPerSecond(List<NetStatInfo> messages)
+    {
+        if (messages.Count == 0)
+            return 0u;
+
+        RemoveOldTrackedMessages(messages, DateTime.Now - MessageLife);
+
+        double messageCountDouble = (double)messages.Count;
+        messageCountDouble = messageCountDouble / MessageLife.TotalSeconds;
+
+        return (uint)(messageCountDouble);
+    }
+
+    public static (uint messagesSentPerSecond, ulong bytesSentPerSecond, uint messagesReceivedPerSecond, ulong bytesReceivedPerSecond) GetNetStats()
+    {
+        ulong averageBytesSent = AverageBytesPerSecond(MessagesSent);
+        ulong averageBytesReceived = AverageBytesPerSecond(MessagesReceived);
+
+        uint messagesSent = MessagesPerSecond(MessagesSent);
+        uint messagesReceived = MessagesPerSecond(MessagesReceived);
+
+        return (messagesSent, averageBytesSent, messagesReceived, averageBytesReceived);
+    }
 }
 
 public class NetStats : MonoBehaviour
@@ -25,11 +96,13 @@ public class NetStats : MonoBehaviour
 
         if (mShowGUI)
         {
+            var (messagesSentPerSecond, bytesSentPerSecond, messagesReceivedPerSecond, bytesReceivedPerSecond) = NetStatTracker.GetNetStats();
+
             GUI.Box(new Rect(2, 2, 400, 300), "");
-            GUI.Label(new Rect(10, 30, 400, 30), $"Messages Sent: {NetStatTracker.MessagesSent}");
-            GUI.Label(new Rect(10, 60, 400, 30), $"Bytes Sent: {NetStatTracker.BytesSent}");
-            GUI.Label(new Rect(10, 120, 400, 30), $"Messages Received: {NetStatTracker.MessagesReceived}");
-            GUI.Label(new Rect(10, 150, 400, 30), $"Bytes Sent: {NetStatTracker.BytesReceived}");
+            GUI.Label(new Rect(10, 60, 400, 30), $"Sent (Bps): {bytesSentPerSecond}");
+            GUI.Label(new Rect(10, 30, 400, 30), $"Sent (Messages): {messagesSentPerSecond}");
+            GUI.Label(new Rect(10, 120, 400, 30), $"Received (Bps): {bytesReceivedPerSecond}");
+            GUI.Label(new Rect(10, 150, 400, 30), $"Received (Messages): {messagesReceivedPerSecond}");
             if (GUI.Button(new Rect(120, 250, 150, 40), "Hide Stats"))
                 mShowGUI = false;
         }
