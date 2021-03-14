@@ -35,8 +35,11 @@ public class PlayerController : MonoBehaviour
     // Dan's IP: 64.137.136.12
 
     public float Speed = 1.0f;
+    public TimeSpan TickRate = TimeSpan.FromMilliseconds(34);
 
     private Socket mSocket = null;
+
+    private DateTime mLastDataSentTimeStamp = DateTime.MinValue;
 
 
     void Start()
@@ -62,12 +65,29 @@ public class PlayerController : MonoBehaviour
 
         ClampPositionToScreen();
 
-        string message = $"{transform.position.x}|{transform.position.y}";
+        TrySendPositionData();
+    }
 
-        byte[] bytes = Encoding.UTF8.GetBytes(message);
-        mSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
+    private void TrySendPositionData()
+    {
+        if (DateTime.Now >= mLastDataSentTimeStamp + TickRate)
+        {
+            string message = $"{transform.position.x}|{transform.position.y}";
 
-        NetStatTracker.TrackMessageSent((ulong)(bytes.Length * sizeof(byte)));
+            byte[] bytes = Encoding.UTF8.GetBytes(message);
+            mSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
+
+            NetStatTracker.TrackMessageSent((ulong)(bytes.Length * sizeof(byte)));
+
+            if (DateTime.Now - mLastDataSentTimeStamp > TimeSpan.FromMilliseconds(200))
+            {
+                mLastDataSentTimeStamp = DateTime.Now;
+            }
+            else
+            {
+                mLastDataSentTimeStamp += TickRate;
+            }
+        }
     }
 
 
