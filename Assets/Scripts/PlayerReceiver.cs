@@ -34,11 +34,6 @@ public class PlayerReceiver : MonoBehaviour
 
             mSocket.ReceiveFrom(buffer, ref endpoint);
 
-            if (endpoint == EndPointChooser.MarcoEndPoint)
-            {
-                Debug.Log("Baller, it's marco");
-            }
-
             int stringLen = 0;
             for (int i = 0; i < buffer.Length; ++i)
             {
@@ -51,9 +46,12 @@ public class PlayerReceiver : MonoBehaviour
 
             string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
 
+            Debug.Log($"Endpoint: {endpoint}, message: {message}");
+            return;
+
             NetStatTracker.TrackMessageReceived((ulong)stringLen);
 
-            Debug.Log($"Message: {message}");
+            //Debug.Log($"Message: {message}");
 
             string[] coords = message.Split('|');
 

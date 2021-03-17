@@ -10,6 +10,8 @@ static class EndPointChooser
 {
     public static readonly int port = 35353;
 
+    // Marco's IP: 184.147.95.146
+    // Dan's IP: 64.137.136.12
     public static readonly IPEndPoint DanEndPoint = new IPEndPoint(IPAddress.Parse("64.137.136.12"), port);
     public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.147.95.146"), port);
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
@@ -31,9 +33,6 @@ static class EndPointChooser
 
 public class PlayerController : MonoBehaviour
 {
-    // Marco's IP: 184.147.95.146
-    // Dan's IP: 64.137.136.12
-
     public float Speed = 1.0f;
     public TimeSpan TickRate = TimeSpan.FromMilliseconds(34);
 
