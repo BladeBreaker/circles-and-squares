@@ -10,6 +10,12 @@ namespace PingServer
 {
     class Program
     {
+        // I can't hit clone-god from my PC using my external IP address so I'm going to hit it internally and just
+        // translate from my internal address to my external address.
+        public static readonly IPAddress DansInternalAddress = IPAddress.Parse("10.88.111.32");
+        public static readonly IPAddress DansExternalAddress = IPAddress.Parse("64.137.136.12");
+
+
         public static async Task Main(string[] args)
         {
             Console.WriteLine("Ready, please enter a command");
@@ -53,6 +59,15 @@ namespace PingServer
             Console.WriteLine("Shutdown Complete");
         }
 
+
+        public static void TranslateForDanNonsense(IPEndPoint endpoint)
+        {
+            if (endpoint.Address == DansInternalAddress)
+            {
+                endpoint.Address = DansExternalAddress;
+            }
+        }
+
         public static async Task ListenAndRespondToPings(CancellationToken token)
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -70,6 +85,8 @@ namespace PingServer
                     EndPoint endpoint = new IPEndPoint(IPAddress.Any, 35357);
 
                     socket.ReceiveFrom(buffer, ref endpoint);
+
+                    TranslateForDanNonsense((IPEndPoint)endpoint);
 
                     if (player1 == null)
                     {
