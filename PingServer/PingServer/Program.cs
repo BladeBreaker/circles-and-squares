@@ -60,11 +60,13 @@ namespace PingServer
         }
 
 
-        public static void TranslateForDanNonsense(IPEndPoint endpoint)
+        public static void TranslateForDanNonsense(EndPoint endpoint)
         {
-            if (endpoint.Address == DansInternalAddress)
+            IPEndPoint tmp = (IPEndPoint)endpoint;
+            if (tmp.Address == DansInternalAddress)
             {
-                endpoint.Address = DansExternalAddress;
+                Console.WriteLine("Found a DanEndpoint");
+                tmp.Address = DansExternalAddress;
             }
         }
 
