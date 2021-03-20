@@ -53,17 +53,16 @@ public class PlayerReceiver : MonoBehaviour
 
                 sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 sSocket.Bind(new IPEndPoint(IPAddress.Any, port));
+
+                Debug.Log($"NAT PUNCH DATA: Endpoint: {endpoint}, message: {message}");
+
+                return;
             }
 
 
-            Debug.Log($"Endpoint: {endpoint}, message: {message}");
-
             NetStatTracker.TrackMessageReceived((ulong)stringLen);
 
-            return;
- 
-
-            //Debug.Log($"Message: {message}");
+            Debug.Log($"Received Data from {endpoint}");
 
             string[] coords = message.Split('|');
 
