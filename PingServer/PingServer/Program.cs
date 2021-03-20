@@ -63,7 +63,7 @@ namespace PingServer
         public static void TranslateForDanNonsense(EndPoint endpoint)
         {
             IPEndPoint tmp = (IPEndPoint)endpoint;
-            if (tmp.Address == DansInternalAddress)
+            if (tmp.Address.Equals(DansInternalAddress))
             {
                 Console.WriteLine("Found a DanEndpoint");
                 tmp.Address = DansExternalAddress;
