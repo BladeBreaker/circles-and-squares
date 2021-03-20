@@ -41,9 +41,20 @@ public class PlayerReceiver : MonoBehaviour
                 }
             }
 
-            LastKnownEndpoint = endpoint;
-
             string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
+
+            if (LastKnownEndpoint == null)
+            {
+                string[] splits = message.Split(':');
+                LastKnownEndpoint = new IPEndPoint(IPAddress.Parse(splits[0]), port);
+
+                sSocket.Shutdown(SocketShutdown.Both);
+                sSocket.Close();
+
+                sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                sSocket.Bind(new IPEndPoint(IPAddress.Any, port));
+            }
+
 
             Debug.Log($"Endpoint: {endpoint}, message: {message}");
 

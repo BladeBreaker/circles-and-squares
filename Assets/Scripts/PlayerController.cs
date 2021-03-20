@@ -9,7 +9,7 @@ using static EndPointChooser;
 
 static class EndPointChooser
 {
-    public static readonly int port = 35357;
+    public static readonly int port = 35353;
 
     // Marco's IP: 184.147.95.146
     // Dan's IP: 64.137.136.12
@@ -17,13 +17,13 @@ static class EndPointChooser
     public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.144.70.9"), port);
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
 
-    public static readonly IPEndPoint PingServer = new IPEndPoint(DanEndPoint.Address, 35357);
+    public static readonly IPEndPoint PingServer = new IPEndPoint(IPAddress.Parse("10.88.111.200"), 35357);
 
     public static readonly IPEndPoint NoneEndpoint = new IPEndPoint(IPAddress.Loopback, 55555);
 
     public static readonly IPEndPoint ChosenOpponentEndPoint = null;
 
-    public static readonly Socket sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+    public static Socket sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
     public static EndPoint LastKnownEndpoint = null;
 
@@ -36,7 +36,6 @@ static class EndPointChooser
         else
         {
             ChosenOpponentEndPoint = DanEndPoint;
-            LastKnownEndpoint = ChosenOpponentEndPoint;
         }
     }
 }
@@ -73,7 +72,7 @@ public class PlayerController : MonoBehaviour
 
         ClampPositionToScreen();
 
-        //TrySendPositionData();
+        TrySendPositionData();
     }
 
     private void TrySendPositionData()
