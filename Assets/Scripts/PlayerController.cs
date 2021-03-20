@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System;
 using System.Text;
+using static EndPointChooser;
 
 static class EndPointChooser
 {
@@ -17,6 +18,8 @@ static class EndPointChooser
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
 
     public static readonly IPEndPoint ChosenOpponentEndPoint = null;
+
+    public static readonly Socket sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
     static EndPointChooser()
     {
@@ -36,8 +39,6 @@ public class PlayerController : MonoBehaviour
     public float Speed = 1.0f;
     public TimeSpan TickRate = TimeSpan.FromMilliseconds(34);
 
-    private Socket mSocket = null;
-
     private DateTime mLastDataSentTimeStamp = DateTime.MinValue;
 
 
@@ -49,8 +50,6 @@ public class PlayerController : MonoBehaviour
             enabled = false;
             return;
         }
-
-        mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
     }
 
     void Update()
@@ -74,7 +73,7 @@ public class PlayerController : MonoBehaviour
             string message = $"{transform.position.x}|{transform.position.y}";
 
             byte[] bytes = Encoding.UTF8.GetBytes(message);
-            mSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
+            sSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
 
             NetStatTracker.TrackMessageSent((ulong)(bytes.Length * sizeof(byte)));
 

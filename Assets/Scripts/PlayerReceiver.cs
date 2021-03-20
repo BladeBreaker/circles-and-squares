@@ -5,11 +5,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using static EndPointChooser;
 
 public class PlayerReceiver : MonoBehaviour
 {
-    private Socket mSocket = null;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -19,20 +18,18 @@ public class PlayerReceiver : MonoBehaviour
             return;
         }
 
-        mSocket = new Socket(EndPointChooser.ChosenOpponentEndPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-
-        mSocket.Bind(EndPointChooser.LocalBindEndPoint);
+        sSocket.Bind(EndPointChooser.LocalBindEndPoint);
     }
 
     // Update is called once per frame
     void Update()
     {
-        while (mSocket.Available > 0)
+        while (sSocket.Available > 0)
         {
             byte[] buffer = new byte[15000];
             EndPoint endpoint = EndPointChooser.ChosenOpponentEndPoint;
 
-            mSocket.ReceiveFrom(buffer, ref endpoint);
+            sSocket.ReceiveFrom(buffer, ref endpoint);
 
             int stringLen = 0;
             for (int i = 0; i < buffer.Length; ++i)
