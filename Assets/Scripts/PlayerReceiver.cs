@@ -18,7 +18,7 @@ public class PlayerReceiver : MonoBehaviour
             return;
         }
 
-        sSocket.Bind(EndPointChooser.LocalBindEndPoint);
+        sSocket.Bind(EndPointChooser.PingServer);
     }
 
     // Update is called once per frame

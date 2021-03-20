@@ -55,9 +55,11 @@ namespace PingServer
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            socket.Bind(new IPEndPoint(IPAddress.Any, 35357));
+            socket.Bind(new IPEndPoint(IPAddress.Any, 35351));
 
             byte[] buffer = new byte[1500];
+
+            EndPoint player1 = null;
 
             while (!token.IsCancellationRequested)
             {
@@ -67,11 +69,16 @@ namespace PingServer
 
                     socket.ReceiveFrom(buffer, ref endpoint);
 
-                    string responseMessage = $"Your public IP is: {endpoint}";
-
-                    Console.WriteLine($"Received message from {endpoint}");
-
-                    socket.SendTo(Encoding.UTF8.GetBytes(responseMessage), endpoint);
+                    if (player1 == null)
+                    {
+                        player1 = endpoint;
+                    }
+                    else if (player1 != endpoint)
+                    {
+                        socket.SendTo(Encoding.UTF8.GetBytes($"{player1}"), endpoint);
+                        socket.SendTo(Encoding.UTF8.GetBytes($"{endpoint}"), player1);
+                        player1 = null;
+                    }
                 }
                 else
                 {
