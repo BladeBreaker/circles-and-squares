@@ -18,7 +18,7 @@ public class PlayerReceiver : MonoBehaviour
             return;
         }
 
-        sSocket.Bind(new IPEndPoint(IPAddress.Any, PingServer.Port));
+        sSocket.Bind(new IPEndPoint(IPAddress.Any, NatPTServerPort));
     }
 
     // Update is called once per frame
@@ -26,7 +26,7 @@ public class PlayerReceiver : MonoBehaviour
     {
         while (sSocket.Available > 0)
         {
-            byte[] buffer = new byte[15000];
+            byte[] buffer = new byte[1500];
             EndPoint endpoint = NoneEndpoint;
 
             sSocket.ReceiveFrom(buffer, ref endpoint);
@@ -46,17 +46,21 @@ public class PlayerReceiver : MonoBehaviour
             if (LastKnownEndpoint == null)
             {
                 string[] splits = message.Split(':');
-                LastKnownEndpoint = new IPEndPoint(IPAddress.Parse(splits[0]), port);
+                LastKnownEndpoint = new IPEndPoint(IPAddress.Parse(splits[0]), EndPointChooser.GamePort);
 
                 sSocket.Shutdown(SocketShutdown.Both);
                 sSocket.Close();
 
                 sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                sSocket.Bind(new IPEndPoint(IPAddress.Any, port));
+                sSocket.Bind(new IPEndPoint(IPAddress.Any, EndPointChooser.GamePort));
 
                 Debug.Log($"NAT PUNCH DATA: Endpoint: {endpoint}, message: {message}");
 
                 return;
+            }
+            else if (((IPEndPoint)LastKnownEndpoint).Port != ((IPEndPoint)endpoint).Port)
+            {
+                ((IPEndPoint)LastKnownEndpoint).Port = ((IPEndPoint)endpoint).Port;
             }
 
 

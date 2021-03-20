@@ -9,19 +9,17 @@ using static EndPointChooser;
 
 static class EndPointChooser
 {
-    public static readonly int port = 35353;
+    public static readonly int GamePort = 35353;
+    public static readonly int NatPTServerPort = 35357;
 
-    // Marco's IP: 184.147.95.146
-    // Dan's IP: 64.137.136.12
-    public static readonly IPEndPoint DanEndPoint = new IPEndPoint(IPAddress.Parse("64.137.136.12"), port);
-    public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.144.70.9"), port);
-    public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
+    public static IPAddress NatPTServerAddress = IPAddress.Parse("64.137.136.12");
 
-    public static IPEndPoint PingServer = new IPEndPoint(IPAddress.Parse("10.88.111.200"), 35357);
+    // Necessary because Dan can't hit clone-god on public address
+    public static IPAddress DanNatPTServerAddress = IPAddress.Parse("10.88.111.200");
+
+    public static readonly IPEndPoint NatPTServerEndpoint = null;
 
     public static readonly IPEndPoint NoneEndpoint = new IPEndPoint(IPAddress.Loopback, 55555);
-
-    public static readonly IPEndPoint ChosenOpponentEndPoint = null;
 
     public static Socket sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
@@ -31,13 +29,10 @@ static class EndPointChooser
     {
         if (Environment.UserName == "Dan")
         {
-            ChosenOpponentEndPoint = MarcoEndPoint;
+            NatPTServerAddress = DanNatPTServerAddress;
         }
-        else
-        {
-            ChosenOpponentEndPoint = DanEndPoint;
-            PingServer.Address = DanEndPoint.Address;
-        }
+
+        NatPTServerEndpoint = new IPEndPoint(NatPTServerAddress, NatPTServerPort);
     }
 }
 
@@ -59,7 +54,7 @@ public class PlayerController : MonoBehaviour
         }
 
         byte[] bytes = Encoding.UTF8.GetBytes("balls");
-        sSocket.SendTo(bytes, EndPointChooser.PingServer);
+        sSocket.SendTo(bytes, NatPTServerEndpoint);
     }
 
     void Update()
