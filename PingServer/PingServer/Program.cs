@@ -12,6 +12,8 @@ namespace PingServer
     {
         public static async Task Main(string[] args)
         {
+            Console.WriteLine("Ready, please enter a command");
+
             CancellationTokenSource cts = null;
             Task listenTask = null;
             string command = null;
@@ -71,10 +73,15 @@ namespace PingServer
 
                     if (player1 == null)
                     {
+                        Console.WriteLine($"Found Player 1: {endpoint}");
+
                         player1 = endpoint;
                     }
                     else if (player1 != endpoint)
                     {
+                        Console.WriteLine($"Found Player 2: {endpoint}");
+                        Console.WriteLine($"Sending info to players");
+
                         socket.SendTo(Encoding.UTF8.GetBytes($"{player1}"), endpoint);
                         socket.SendTo(Encoding.UTF8.GetBytes($"{endpoint}"), player1);
                         player1 = null;
