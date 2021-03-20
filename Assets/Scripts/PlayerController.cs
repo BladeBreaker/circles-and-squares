@@ -17,7 +17,7 @@ static class EndPointChooser
     public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.144.70.9"), port);
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
 
-    public static readonly IPEndPoint PingServer = new IPEndPoint(MarcoEndPoint.Address, 35351);
+    public static readonly IPEndPoint PingServer = new IPEndPoint(DanEndPoint.Address, 35357);
 
     public static readonly IPEndPoint NoneEndpoint = new IPEndPoint(IPAddress.Loopback, 55555);
 

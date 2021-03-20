@@ -10,7 +10,7 @@ using static EndPointChooser;
 public class PlayerReceiver : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (gameObject.name.Contains(Environment.UserName))
         {
@@ -18,7 +18,7 @@ public class PlayerReceiver : MonoBehaviour
             return;
         }
 
-        sSocket.Bind(EndPointChooser.PingServer);
+        sSocket.Bind(new IPEndPoint(IPAddress.Any, PingServer.Port));
     }
 
     // Update is called once per frame
