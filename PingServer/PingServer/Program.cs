@@ -55,7 +55,7 @@ namespace PingServer
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            socket.Bind(new IPEndPoint(IPAddress.Any, 35351));
+            socket.Bind(new IPEndPoint(IPAddress.Any, 35357));
 
             byte[] buffer = new byte[1500];
 
