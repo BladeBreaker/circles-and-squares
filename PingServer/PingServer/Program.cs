@@ -60,7 +60,16 @@ namespace PingServer
         }
 
 
-        public static void TranslateForDanNonsense(EndPoint endpoint)
+        public static void TranslateDanFromExternalToInternal(EndPoint endpoint)
+        {
+            IPEndPoint tmp = (IPEndPoint)endpoint;
+            if (tmp.Address.Equals(DansExternalAddress))
+            {
+                tmp.Address = DansInternalAddress;
+            }
+        }
+
+        public static void TranslateDanFromInternalToExternal(EndPoint endpoint)
         {
             IPEndPoint tmp = (IPEndPoint)endpoint;
             if (tmp.Address.Equals(DansInternalAddress))
@@ -87,7 +96,7 @@ namespace PingServer
 
                     socket.ReceiveFrom(buffer, ref endpoint);
 
-                    TranslateForDanNonsense((IPEndPoint)endpoint);
+                    TranslateDanFromInternalToExternal((IPEndPoint)endpoint);
 
                     if (player1 == null)
                     {
@@ -100,8 +109,14 @@ namespace PingServer
                         Console.WriteLine($"Found Player 2: {endpoint}");
                         Console.WriteLine($"Sending info to players");
 
-                        socket.SendTo(Encoding.UTF8.GetBytes($"{player1}"), endpoint);
-                        socket.SendTo(Encoding.UTF8.GetBytes($"{endpoint}"), player1);
+                        string message1 = $"{player1}";
+                        string message2 = $"{endpoint}";
+
+                        TranslateDanFromExternalToInternal(endpoint);
+                        TranslateDanFromExternalToInternal(player1);
+
+                        socket.SendTo(Encoding.UTF8.GetBytes(message1), endpoint);
+                        socket.SendTo(Encoding.UTF8.GetBytes(message2), player1);
                         player1 = null;
                     }
                 }
