@@ -55,7 +55,7 @@ namespace PingServer
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            socket.Bind(new IPEndPoint(IPAddress.Any, 35353));
+            socket.Bind(new IPEndPoint(IPAddress.Any, 35357));
 
             byte[] buffer = new byte[1500];
 
@@ -63,7 +63,7 @@ namespace PingServer
             {
                 if (socket.Available > 0)
                 {
-                    EndPoint endpoint = new IPEndPoint(IPAddress.Any, 35353);
+                    EndPoint endpoint = new IPEndPoint(IPAddress.Any, 35357);
 
                     socket.ReceiveFrom(buffer, ref endpoint);
 
@@ -71,7 +71,7 @@ namespace PingServer
 
                     Console.WriteLine($"Received message from {endpoint}");
 
-                    socket.SendTo(Encoding.UTF8.GetBytes(responseMessage), new IPEndPoint(((IPEndPoint)endpoint).Address, 35353));
+                    socket.SendTo(Encoding.UTF8.GetBytes(responseMessage), endpoint);
                 }
                 else
                 {
