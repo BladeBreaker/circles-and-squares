@@ -65,7 +65,6 @@ namespace PingServer
             IPEndPoint tmp = (IPEndPoint)endpoint;
             if (tmp.Address.Equals(DansInternalAddress))
             {
-                Console.WriteLine("Found a DanEndpoint");
                 tmp.Address = DansExternalAddress;
             }
         }
@@ -96,7 +95,7 @@ namespace PingServer
 
                         player1 = endpoint;
                     }
-                    else if (player1 != endpoint)
+                    else if (!player1.Equals(endpoint))
                     {
                         Console.WriteLine($"Found Player 2: {endpoint}");
                         Console.WriteLine($"Sending info to players");
