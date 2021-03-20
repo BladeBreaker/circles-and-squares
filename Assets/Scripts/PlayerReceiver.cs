@@ -46,9 +46,11 @@ public class PlayerReceiver : MonoBehaviour
             string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
 
             Debug.Log($"Endpoint: {endpoint}, message: {message}");
-            return;
 
             NetStatTracker.TrackMessageReceived((ulong)stringLen);
+
+            return;
+ 
 
             //Debug.Log($"Message: {message}");
 

@@ -14,7 +14,7 @@ static class EndPointChooser
     // Marco's IP: 184.147.95.146
     // Dan's IP: 64.137.136.12
     public static readonly IPEndPoint DanEndPoint = new IPEndPoint(IPAddress.Parse("64.137.136.12"), port);
-    public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.147.95.146"), port);
+    public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.144.70.9"), port);
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
 
     public static readonly IPEndPoint NoneEndpoint = new IPEndPoint(IPAddress.Loopback, 55555);
@@ -76,6 +76,8 @@ public class PlayerController : MonoBehaviour
         if (DateTime.Now >= mLastDataSentTimeStamp + TickRate && LastKnownEndpoint != null)
         {
             string message = $"{transform.position.x}|{transform.position.y}";
+
+            Debug.Log($"Sending to Endpoint: {LastKnownEndpoint}");
 
             byte[] bytes = Encoding.UTF8.GetBytes(message);
             sSocket.SendTo(bytes, EndPointChooser.LastKnownEndpoint);
