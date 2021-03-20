@@ -17,15 +17,20 @@ static class EndPointChooser
     public static readonly IPEndPoint MarcoEndPoint = new IPEndPoint(IPAddress.Parse("184.147.95.146"), port);
     public static readonly IPEndPoint LocalBindEndPoint = new IPEndPoint(IPAddress.Any, port);
 
+    public static readonly IPEndPoint NoneEndpoint = new IPEndPoint(IPAddress.Loopback, 55555);
+
     public static readonly IPEndPoint ChosenOpponentEndPoint = null;
 
     public static readonly Socket sSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+    public static EndPoint LastKnownEndpoint = null;
 
     static EndPointChooser()
     {
         if (Environment.UserName == "Dan")
         {
             ChosenOpponentEndPoint = MarcoEndPoint;
+            LastKnownEndpoint = ChosenOpponentEndPoint;
         }
         else
         {
@@ -68,12 +73,12 @@ public class PlayerController : MonoBehaviour
 
     private void TrySendPositionData()
     {
-        if (DateTime.Now >= mLastDataSentTimeStamp + TickRate)
+        if (DateTime.Now >= mLastDataSentTimeStamp + TickRate && LastKnownEndpoint != null)
         {
             string message = $"{transform.position.x}|{transform.position.y}";
 
             byte[] bytes = Encoding.UTF8.GetBytes(message);
-            sSocket.SendTo(bytes, EndPointChooser.ChosenOpponentEndPoint);
+            sSocket.SendTo(bytes, EndPointChooser.LastKnownEndpoint);
 
             NetStatTracker.TrackMessageSent((ulong)(bytes.Length * sizeof(byte)));
 

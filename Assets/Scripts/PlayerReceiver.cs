@@ -27,7 +27,7 @@ public class PlayerReceiver : MonoBehaviour
         while (sSocket.Available > 0)
         {
             byte[] buffer = new byte[15000];
-            EndPoint endpoint = EndPointChooser.ChosenOpponentEndPoint;
+            EndPoint endpoint = NoneEndpoint;
 
             sSocket.ReceiveFrom(buffer, ref endpoint);
 
@@ -40,6 +40,8 @@ public class PlayerReceiver : MonoBehaviour
                     break;
                 }
             }
+
+            LastKnownEndpoint = endpoint;
 
             string message = Encoding.UTF8.GetString(buffer, 0, stringLen);
 
